@@ -24,7 +24,10 @@ const Home = () => {
 
   const { data: vehicles } = useQuery("vehicleCache", async () => {
     const response = await API.get("/vehicles");
-    return response.data;
+    if (response.status === 200) {
+      setDataFilter(response.data);
+      return response.data;
+    }
   });
 
   const handleSearchChange = (e) => {
@@ -59,54 +62,6 @@ const Home = () => {
       setMessage(alert);
     }
   });
-
-  // const handleDataFilterByRegNumber = (e) => {
-  //   if (!e.target.value) {
-  //     setDataFilter(vehicles);
-  //     return;
-  //   }
-
-  //   const filterVehicle = vehicles?.filter((vehicle) => {
-  //     return vehicle.registrationNumber
-  //       .toLowerCase()
-  //       .includes(e.target.value.toLowerCase());
-  //   });
-
-  //   setDataFilter(filterVehicle);
-  // };
-  // const handleDataFilterByOwnerName = (e) => {
-  //   if (!e.target.value) {
-  //     setDataFilter(vehicles);
-  //     return;
-  //   }
-
-  //   const filterVehicle = vehicles?.filter((vehicle) => {
-  //     return vehicle.ownerName
-  //       .toLowerCase()
-  //       .includes(e.target.value.toLowerCase());
-  //   });
-
-  //   setDataFilter(filterVehicle);
-  // };
-
-  const deleteData = async (id) => {
-    try {
-      const response = await API.delete(`/vehicle/${id}`);
-      const alert = (
-        <Alert variant="success" className="py-1 mb-3">
-          {response.data}
-        </Alert>
-      );
-      setMessage(alert);
-    } catch (error) {
-      const alert = (
-        <Alert variant="danger" className="py-1 mb-3">
-          {error.response.data.message}
-        </Alert>
-      );
-      setMessage(alert);
-    }
-  };
 
   useEffect(() => {
     setDataFilter(vehicles);
@@ -153,7 +108,7 @@ const Home = () => {
         <Row className="justify-content-center">
           <Col md={12}>
             {message && message}
-            <MonitoringTable vehicles={dataFilter} deleteData={deleteData} />
+            <MonitoringTable vehicles={dataFilter} />
           </Col>
         </Row>
       </Container>

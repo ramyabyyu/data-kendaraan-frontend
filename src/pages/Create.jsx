@@ -55,6 +55,13 @@ const Create = () => {
     }
   });
 
+  let years = [];
+  let currentYear = new Date().getFullYear();
+
+  for (let i = 1990; i <= currentYear; i++) {
+    years.push(i);
+  }
+
   return (
     <>
       <Navbar title="Tambah Data Kendaraan" />
@@ -121,12 +128,27 @@ const Create = () => {
                 <Form.Label htmlFor="productionYear">
                   Tahun Pembuatan
                 </Form.Label>
-                <Form.Control
+                {/* <Form.Control
                   type="number"
                   name="productionYear"
                   id="productionYear"
+                  min={1885}
+                  max={new Date().getFullYear()}
+                  maxLength={4}
                   onChange={handleChange}
-                />
+                /> */}
+                <Form.Select
+                  name="productionYear"
+                  id="productionYear"
+                  onChange={handleChange}
+                >
+                  <option disabled selected>
+                    Pilih Tahun Pembuatan
+                  </option>
+                  {years.map((year) => (
+                    <option value={year}>{year}</option>
+                  ))}
+                </Form.Select>
               </div>
               <div className="mb-3">
                 <Form.Label htmlFor="cylinderCapacity">
