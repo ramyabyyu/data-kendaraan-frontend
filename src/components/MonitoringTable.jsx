@@ -10,17 +10,18 @@ import {
 } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { API } from "../config/api";
+import ConfirmModal from "./ConfirmModal";
 
-const MonitoringTable = ({ vehicles }) => {
-  const deleteData = async (id) => {
-    try {
-      const response = await API.delete(`/vehicle/${id}`);
-      if (response.status === 200) {
-        window.location.reload();
-      }
-    } catch (error) {
-      console.log(error);
-    }
+const MonitoringTable = ({ vehicles, setFetchStatus }) => {
+  const [show, setShow] = useState(false);
+  const handleShow = () => setShow(true);
+  const handleClose = () => setShow(false);
+
+  const [dataId, setDataId] = useState(null);
+
+  const handleGetId = (id) => {
+    setDataId(id);
+    handleShow();
   };
 
   return (
@@ -73,7 +74,19 @@ const MonitoringTable = ({ vehicles }) => {
                     >
                       Edit
                     </Button>
-                    <Dropdown>
+                    <Button
+                      onClick={() => handleGetId(vehicle.id)}
+                      className="btn btn-light text-danger fw-bold p-0 me-2"
+                    >
+                      Delete
+                    </Button>
+                    <ConfirmModal
+                      show={show}
+                      handleClose={handleClose}
+                      dataId={dataId}
+                      setFetchStatus={setFetchStatus}
+                    />
+                    {/* <Dropdown>
                       <Dropdown.Toggle
                         variant="light"
                         id="dropdown-basic"
@@ -94,7 +107,7 @@ const MonitoringTable = ({ vehicles }) => {
                           Cancel
                         </Dropdown.Item>
                       </Dropdown.Menu>
-                    </Dropdown>
+                    </Dropdown> */}
                   </td>
                 </tr>
               ))}

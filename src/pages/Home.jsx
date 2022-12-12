@@ -20,15 +20,14 @@ const Home = () => {
     registrationNumber: "",
     ownerName: "",
   });
+
+  const [fetchStatus, setFetchStatus] = useState(true);
+
   const [message, setMessage] = useState(null);
 
-  const { data: vehicles } = useQuery("vehicleCache", async () => {
-    const response = await API.get("/vehicles");
-    if (response.status === 200) {
-      setDataFilter(response.data);
-      return response.data;
-    }
-  });
+  // const { data: vehicles } = useQuery("vehicleCache", () => {
+
+  // });
 
   const handleSearchChange = (e) => {
     setSearchData({
@@ -64,8 +63,18 @@ const Home = () => {
   });
 
   useEffect(() => {
-    setDataFilter(vehicles);
-  }, [vehicles]);
+    const fetchData = async () => {
+      const response = await API.get("/vehicles");
+      if (response.status === 200) {
+        setDataFilter(response.data);
+        return response.data;
+      }
+    };
+    if (fetchStatus) {
+      fetchData();
+      setFetchStatus(false);
+    }
+  }, [fetchStatus, setFetchStatus]);
 
   return (
     <>
@@ -108,7 +117,10 @@ const Home = () => {
         <Row className="justify-content-center">
           <Col md={12}>
             {message && message}
-            <MonitoringTable vehicles={dataFilter} />
+            <MonitoringTable
+              vehicles={dataFilter}
+              setFetchStatus={setFetchStatus}
+            />
           </Col>
         </Row>
       </Container>

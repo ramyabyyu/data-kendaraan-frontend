@@ -1,20 +1,20 @@
-import React, { useState } from "react";
-import { Alert, Button, Col, Container, Form, Row } from "react-bootstrap";
-import Navbar from "../components/Navbar";
-import { Link, useNavigate } from "react-router-dom";
-import { useMutation } from "react-query";
-import { API } from "../config/api";
+import React, { useState } from 'react';
+import { Alert, Button, Col, Container, Form, Row } from 'react-bootstrap';
+import Navbar from '../components/Navbar';
+import { Link, useNavigate } from 'react-router-dom';
+import { useMutation } from 'react-query';
+import { API } from '../config/api';
 
 const Create = () => {
   const [formData, setFormData] = useState({
-    registrationNumber: "",
-    ownerName: "",
-    address: "",
-    vehicleBrand: "",
+    registrationNumber: '',
+    ownerName: '',
+    address: '',
+    vehicleBrand: '',
     productionYear: 0,
     cylinderCapacity: 0,
-    vehicleColor: "",
-    fuel: "",
+    vehicleColor: '',
+    fuel: '',
   });
 
   const [message, setmessage] = useState(null);
@@ -22,6 +22,32 @@ const Create = () => {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
+    if (e.target.name === 'productionYear') {
+      const num = parseInt(e.target.value);
+      const inp = document.getElementById('productionYear');
+      const textInfo = document.getElementById('textInfo');
+      if (num > 2022) {
+        inp.classList.add('border', 'border-danger');
+        textInfo.classList.remove('d-none');
+      } else {
+        inp.classList.remove('border', 'border-danger');
+        textInfo.classList.add('d-none');
+      }
+    }
+
+    if (e.target.name === 'cylinderCapacity') {
+      const num = parseInt(e.target.value);
+      const inp = document.getElementById('cylinderCapacity');
+      const textInfo = document.getElementById('textInfoCC');
+      if (num < 1000) {
+        inp.classList.add('border', 'border-danger');
+        textInfo.classList.remove('d-none');
+      } else {
+        inp.classList.remove('border', 'border-danger');
+        textInfo.classList.add('d-none');
+      }
+    }
+
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -33,16 +59,16 @@ const Create = () => {
       e.preventDefault();
       const config = {
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       };
 
       const body = JSON.stringify(formData);
 
-      const response = await API.post("/vehicle", body, config);
+      const response = await API.post('/vehicle', body, config);
 
       if (response.status === 200) {
-        navigate("/");
+        navigate('/');
       }
     } catch (error) {
       console.log(error);
@@ -83,7 +109,7 @@ const Create = () => {
               </div>
               <div className="mb-3">
                 <Form.Label htmlFor="ownerName">
-                  Name Pemilik Kendaraan
+                  Nama Pemilik Kendaraan
                 </Form.Label>
                 <Form.Control
                   type="text"
@@ -110,7 +136,7 @@ const Create = () => {
                   name="address"
                   id="address"
                   rows={3}
-                  style={{ resize: "none" }}
+                  style={{ resize: 'none' }}
                   onChange={handleChange}
                 />
               </div>
@@ -128,7 +154,7 @@ const Create = () => {
                 <Form.Label htmlFor="productionYear">
                   Tahun Pembuatan
                 </Form.Label>
-                {/* <Form.Control
+                <Form.Control
                   type="number"
                   name="productionYear"
                   id="productionYear"
@@ -136,8 +162,11 @@ const Create = () => {
                   max={new Date().getFullYear()}
                   maxLength={4}
                   onChange={handleChange}
-                /> */}
-                <Form.Select
+                />
+                <small className="text-danger d-none" id="textInfo">
+                  Tahun Pembuatan tidak valid
+                </small>
+                {/* <Form.Select
                   name="productionYear"
                   id="productionYear"
                   onChange={handleChange}
@@ -148,7 +177,7 @@ const Create = () => {
                   {years.map((year) => (
                     <option value={year}>{year}</option>
                   ))}
-                </Form.Select>
+                </Form.Select> */}
               </div>
               <div className="mb-3">
                 <Form.Label htmlFor="cylinderCapacity">
@@ -160,6 +189,9 @@ const Create = () => {
                   id="cylinderCapacity"
                   onChange={handleChange}
                 />
+                <small className="text-danger d-none" id="textInfoCC">
+                  Kapasitas silinder tidak boleh kurang dari 1000
+                </small>
               </div>
               <div className="mb-3">
                 <Form.Label htmlFor="vehicleColor">Warna Kendaraan</Form.Label>
